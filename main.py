@@ -3,16 +3,18 @@ from bs4 import BeautifulSoup
 
 
 def fetch_page_content(page_url):
+    """Fetch the content of a web page."""
+    
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36'
     }
     
     try:
-        # Make a GET request
+        # Make a GET request to the specified URL.
         response = requests.get(page_url, headers=headers, timeout=10)
-        response.raise_for_status()  # Handles non-successful requests
+        response.raise_for_status()  # Raises an error for non-successful requests
         
-        return response.content  # return page content
+        return response.content  # Return page content if successful
     
     except requests.exceptions.HTTPError as http_err:
         print(f"HTTP error occurred: {http_err}")
@@ -22,10 +24,13 @@ def fetch_page_content(page_url):
         print("Connection error occurred. Please check your internet connection.")
     except requests.exceptions.RequestException as err:
         print(f"Other error occurred: {err}")
-        return None
+    
+    return None  # Explicitly return None if an error occurs
 
 
 def extract_quotes_and_authors(page_content):
+    """Extract quotes and their authors from the page content."""
+    
     # Make a soup object
     soup = BeautifulSoup(page_content, 'lxml')
     
@@ -39,9 +44,24 @@ def extract_quotes_and_authors(page_content):
     return quotes_and_authors
 
 
+def get_number_of_pages():
+    """Get the number of pages to scrape from the user."""
+    
+    while True:
+        try:
+            # Get user input for number of pages to scrape
+            num_of_pages = int(input("How many pages would you like to scrape? "))
+            return num_of_pages
+        
+        except ValueError:
+            print("Invalid input, please enter a valid number.\n")
+            continue
+
+
 def scrape_quotes():
-    # Get user input for number of pages to scrape
-    pages = int(input("How many pages would you like to scrape? "))
+    """Main function to scrape quotes from the specified number of pages."""
+    
+    pages = get_number_of_pages()
     
     # Get the data for each page
     for current_page_num in range(1, pages + 1):
@@ -50,12 +70,14 @@ def scrape_quotes():
         # Get the page content
         page_content = fetch_page_content(page_url)
         
-        # Parse or scrape the content
-        quotes_and_authors = extract_quotes_and_authors(page_content)
-        
-        # Print all quotes along their author's name
-        for quote, author in quotes_and_authors:
-            print(f"{quote.text}\n- {author.text}\n\n")
+        # Check if page content was fetched successfully
+        if page_content:
+            # Parse or scrape the content
+            quotes_and_authors = extract_quotes_and_authors(page_content)
+            
+            # Print all quotes along their author's name
+            for quote, author in quotes_and_authors:
+                print(f"{quote.text}\n- {author.text}\n\n")
 
 
 if __name__ == '__main__':
