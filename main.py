@@ -11,18 +11,16 @@ def get_quotes():
     # Make a soup object
     soup = BeautifulSoup(response.content, 'lxml')
     
-    # Find and extract the first quote.
-    quote = soup.find('span', class_='text').text
-    print(quote)
+    # Find all quotes
+    quotes = soup.find_all('span', class_='text')
     
-    # Find and extract the author's name of the first quote
-    author = soup.find('small', class_='author').text
-    print(author)
+    # Find author's names
+    authors = soup.find_all('small', class_='author')
+    
+    # Print all quotes along their author's name
+    for quote, author in zip(quotes, authors):
+        print(f"{quote.text}\n- {author.text}\n\n")
 
 
 if __name__ == '__main__':
     get_quotes()
-
-# OUTPUT:
-# “The world as we have created it is a process of our thinking. It cannot be changed without changing our thinking.”
-# Albert Einstein
