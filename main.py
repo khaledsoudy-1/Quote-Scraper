@@ -3,15 +3,23 @@ from bs4 import BeautifulSoup
 
 
 def fetch_page_content(page_url):
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36'
+    }
+    
     try:
         # Make a GET request
-        response = requests.get(page_url)
+        response = requests.get(page_url, headers=headers, timeout=10)
         response.raise_for_status()  # Handles non-successful requests
         
         return response.content  # return page content
     
     except requests.exceptions.HTTPError as http_err:
         print(f"HTTP error occurred: {http_err}")
+    except requests.exceptions.Timeout as timeout_err:
+        print(f"Timeout error occurred: {timeout_err}")
+    except requests.exceptions.ConnectionError:
+        print("Connection error occurred. Please check your internet connection.")
     except requests.exceptions.RequestException as err:
         print(f"Other error occurred: {err}")
         return None
