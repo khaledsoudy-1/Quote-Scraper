@@ -63,9 +63,14 @@ def scrape_quotes():
     
     pages = get_number_of_pages()
     
+    # Get the file name from user
+    file_name = input("\nEnter the name of the file to save the data: ")
+    
     # Get the data for each page
     for current_page_num in range(1, pages + 1):
         page_url = f'https://quotes.toscrape.com/page/{current_page_num}'
+        
+        print(f"Scraping page {current_page_num}...")         # Feedback on progress
         
         # Get the page content
         page_content = fetch_page_content(page_url)
@@ -75,9 +80,13 @@ def scrape_quotes():
             # Parse or scrape the content
             quotes_and_authors = extract_quotes_and_authors(page_content)
             
-            # Print all quotes along their author's name
-            for quote, author in quotes_and_authors:
-                print(f"{quote.text}\n- {author.text}\n\n")
+            # Save all quotes along their author's name to a text file
+            with open(f"{file_name}.txt", "a") as f:         # Use "a" to append to the file
+                
+                for quote, author in quotes_and_authors:
+                    f.write(f"{quote.text}\n- {author.text}\n\n")
+        
+    print(f"\nSaving data to {file_name}.txt ...")
 
 
 if __name__ == '__main__':
